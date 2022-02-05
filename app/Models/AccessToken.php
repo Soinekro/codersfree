@@ -13,6 +13,6 @@ class AccessToken extends Model
     //relacion 1 a 1
 
     public function user(){
-        return $this->hasOne(AccessToken::class);
+        return $this->hasOne(User::class);
     }
 }
