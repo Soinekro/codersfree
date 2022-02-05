@@ -9,11 +9,13 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Traits\Token;
 
 use Illuminate\Support\Facades\Http;
 
 class AuthenticatedSessionController extends Controller
 {
+    use Token;
     /**
      * Display the login view.
      *
@@ -61,27 +63,7 @@ class AuthenticatedSessionController extends Controller
         ],$service['data']);
 
         if (!$user->accessToken) {
-
-            $response = Http::withHeaders([
-                'Accept'=>'aplication/json',
-            ])->post('http://api.codersfree.test/oauth/token',[
-                'grant_type'=>'password',
-                'client_id' => '9585439f-2b66-4daf-80d2-de0febd081cf',
-                'client_secret' => 'e6d2Wl3sahNsGxCbVVeZoI1OBiSi9ilBYbBKtrX4',
-                'username' =>  $request->email,
-                'password'  => $request->password,
-            ]);
-
-            $access_token = $response->json();
-
-            //return $service;
-            $user->accessToken()->create([
-                'service_id' =>$service['data']['id'],
-                'access_token'  => $access_token['access_token'],
-                'refresh_token'=>$access_token['refresh_token'],
-                'expires_at'=>now()->addSecond($access_token['expires_in']),
-            ]);
-            dd($access_token);
+            $this->getAccessToken($user,$service);
         }
 
         Auth::login($user,$request->remember);
