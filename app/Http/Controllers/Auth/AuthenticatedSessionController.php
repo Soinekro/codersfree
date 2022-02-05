@@ -60,7 +60,8 @@ class AuthenticatedSessionController extends Controller
             'email'=>$request->email,
         ],$service['data']);
 
-        if (!$user->accessToken->count()) {
+        if (!$user->accessToken) {
+
             $response = Http::withHeaders([
                 'Accept'=>'aplication/json',
             ])->post('http://api.codersfree.test/oauth/token',[
